@@ -1,0 +1,5 @@
+Form Fields:
+1. Requirement Type (Functional / Non-Functional)
+2. Description (text)
+3. Priority (High / Medium / Low)
+4. Stakeholder Role (User / Admin / Manager / Customer)

@@ -1,0 +1,235 @@
+# class_diagram.py  -- debug-friendly version
+import pyodbc
+import sys
+import traceback
+import re
+from datetime import datetime
+
+# --- EDIT THESE to match your environment ---
+SQL_SERVER = r"DESKTOP-VEIPHS8\SQLEXPRESS"   # <-- change if needed
+DATABASE = "AutoRE_DB"                       # <-- change if needed
+DRIVER = "{ODBC Driver 17 for SQL Server}"  # or your installed ODBC driver
+# --------------------------------------------
+
+def get_connection():
+    conn_str = (
+        f"DRIVER={DRIVER};"
+        f"SERVER={SQL_SERVER};"
+        f"DATABASE={DATABASE};"
+        "Trusted_Connection=yes;"
+    )
+    try:
+        conn = pyodbc.connect(conn_str, timeout=5)
+        return conn
+    except Exception as e:
+        print("❌ Failed to connect to SQL Server.")
+        print("Connection string used:", conn_str)
+        print("Exception:", e)
+        raise
+
+def fetch_latest_requirements():
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT MAX(SubmissionID) FROM dbo.Requirements")
+        row = cursor.fetchone()
+        last_id = row[0] if row and row[0] is not None else None
+
+        if not last_id:
+            print("ℹ️ No submissions found in dbo.Requirements (SubmissionID is NULL or table empty).")
+            cursor.close()
+            conn.close()
+            return [], None
+
+        print(f"📋 Fetching requirements for SubmissionID = {last_id}")
+        cursor.execute("SELECT Type, Description FROM dbo.Requirements WHERE SubmissionID = ?", (last_id,))
+        rows = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return rows, last_id
+
+    except Exception:
+        print("❌ Error while fetching requirements:")
+        traceback.print_exc()
+        return [], None
+
+def clean_text(txt: str) -> str:
+    if not txt:
+        return ""
+    s = txt.strip().replace("\n", " ").replace("\r", " ")
+    # remove duplicated "the system shall shall ..." patterns
+    s = re.sub(r"\b(system\s+(shall|must)\s+)+", "the system shall ", s, flags=re.IGNORECASE)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
+
+import re
+
+def statement_to_method(sentence):
+    """
+    Convert a requirement sentence into a short method-like name.
+    Examples:
+      "The system shall allow donors to make online donations using multiple payment methods"
+        -> "makeOnlineDonation()"
+      "The system must respond to transactions within 3 seconds"
+        -> "respondToTransaction(timeout=3s)"   (we won't add params in general)
+    This function focuses on extracting the main verb + object and returns camelCase + "()".
+    """
+    s = sentence.strip().lower()
+
+    # remove repeating prefixes
+    s = re.sub(r"\b(the\s+)?system\s+(shall|must|should)\s+", "", s, flags=re.I)
+    s = re.sub(r"\bthe\s+system\s+", "", s, flags=re.I)
+
+    # common verb phrase normalization
+    s = s.replace("allow", "enable")
+    s = s.replace("let", "enable")
+    s = s.replace("permit", "allow")
+    s = s.replace("create and manage", "manage")
+    s = s.replace("create and", "create")
+    s = s.replace("create", "create")
+    s = s.replace("process", "process")
+    s = s.replace("generate", "generate")
+    s = s.replace("view", "view")
+    s = s.replace("track", "track")
+    s = s.replace("notify", "notify")
+    s = s.replace("approve", "approve")
+    s = s.replace("manage", "manage")
+    s = s.replace("register", "register")
+    s = s.replace("log in", "login")
+    s = s.replace("log in", "login")
+    s = re.sub(r"[^\w\s]", " ", s)  # remove punctuation
+
+    words = s.split()
+    if not words:
+        return "doAction()"
+
+    # try to find first meaningful verb (heuristic)
+    verbs = ["enable","allow","process","make","create","manage","generate","view","track","notify","approve","login","register","update","delete","add","remove","search","filter"]
+    verb_idx = None
+    for i,w in enumerate(words):
+        if w in verbs:
+            verb_idx = i
+            verb = w
+            break
+
+    # if no known verb found, assume first word is verb
+    if verb_idx is None:
+        verb_idx = 0
+        verb = words[0]
+
+    # build object phrase after verb (take next 2-4 relevant words)
+    obj_words = []
+    for w in words[verb_idx+1:verb_idx+5]:
+        if w in ("to","with","by","and","using","within","for","the","a","an"):
+            continue
+        obj_words.append(w)
+
+    if not obj_words:
+        # fallback: use next noun-like word
+        for w in words[verb_idx+1:]:
+            if len(w) > 2:
+                obj_words.append(w)
+                break
+
+    # create camelCase method name
+    parts = [verb] + obj_words
+    # sanitize: keep only alnum
+    parts = ["".join(re.findall(r"[a-z0-9]+", p)) for p in parts if p]
+    if not parts:
+        return "doAction()"
+
+    camel = parts[0] + "".join(p.capitalize() for p in parts[1:])
+    # ensure no leading digit
+    if re.match(r"^\d", camel):
+        camel = "do" + camel
+
+    return f"+{camel}()"
+
+
+def generate_class_diagram(requirements):
+    """
+    requirements: list of (Type, Description) tuples
+    This builds PlantUML with methods instead of long sentences.
+    """
+    uml = ["@startuml", "skinparam classAttributeIconSize 0"]
+
+    # classes for donation system
+    uml.append("class Donor { }")
+    uml.append("class Admin extends Donor { }")
+    uml.append("class CampaignManager extends Donor { }")
+    uml.append("class System { }")
+
+    donor_methods, admin_methods, manager_methods, system_methods = set(), set(), set(), set()
+
+    for rtype, desc in requirements:
+        text = desc.strip()
+        text_l = text.lower()
+
+        # clean repeated prefixes
+        text_l = re.sub(r"\b(the\s+)?system\s+(shall|must|should)\s+", "", text_l, flags=re.I).strip()
+
+        # generate method name
+        method = statement_to_method(text)
+
+        # role detection (priority: admin -> manager -> donor -> system)
+        if any(k in text_l for k in ["admin", "administrator"]):
+            admin_methods.add(method)
+        elif any(k in text_l for k in ["manager", "campaign manager", "campaign"]):
+            manager_methods.add(method)
+        elif any(k in text_l for k in ["donor", "user", "client"]):
+            donor_methods.add(method)
+        elif any(k in text_l for k in ["system", "application", "software"]):
+            system_methods.add(method)
+        else:
+            # fallback heuristics
+            if any(k in text_l for k in ["login","register","donate","payment","receipt","profile","profile"]):
+                donor_methods.add(method)
+            else:
+                system_methods.add(method)
+
+    # append methods to PlantUML classes (sorted for determinism)
+    for m in sorted(donor_methods):
+        uml.append(f"Donor : {m}")
+    for m in sorted(admin_methods):
+        uml.append(f"Admin : {m}")
+    for m in sorted(manager_methods):
+        uml.append(f"CampaignManager : {m}")
+    for m in sorted(system_methods):
+        uml.append(f"System : {m}")
+
+    # ✅ If no methods, add a placeholder method so class isn't empty
+    if not admin_methods:
+        uml.append("Admin : manageSystemSettings()")
+
+    if not manager_methods:
+        uml.append("CampaignManager : reviewCampaignReports()")
+
+    uml.append("@enduml")
+    return "\n".join(uml)
+
+def save_to_file(content, filename="class_diagram.puml"):
+    try:
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(content)
+        print("✅ UML code saved to", filename)
+    except Exception:
+        print("❌ Failed to save PUML file:")
+        traceback.print_exc()
+
+if __name__ == "__main__":
+    print("⏳ Starting UML generator:", datetime.now().isoformat())
+    try:
+        reqs, sid = fetch_latest_requirements()
+        if not reqs:
+            print("⚠️ Nothing to generate. Exiting.")
+            sys.exit(0)
+        uml_text = generate_class_diagram(reqs)
+        save_to_file(uml_text)
+        print("\n🎨 Next step (to generate PNG):")
+        print("   plantuml class_diagram.puml")
+        print("✅ Done.")
+    except Exception:
+        print("❌ Unexpected error:")
+        traceback.print_exc()
+        sys.exit(1)

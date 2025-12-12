@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extracted Requirements</title>
+    <style>
+        /* (your same CSS copy as before) */
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f9f9f9; padding: 20px; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); max-width: 1200px; margin: auto; }
+        header { text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 25px; }
+        h1 { color: var(--primary-color); }
+        .section { background: var(--secondary-color); padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+        ul { list-style-type: none; padding: 0; }
+        li { background: white; margin-bottom: 10px; padding: 10px; border-left: 4px solid var(--primary-color); border-radius: 4px; }
+        .section-title { color: var(--primary-dark); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ccc; padding-bottom: 8px; margin-bottom: 15px; }
+        .section-count { background: var(--primary-color); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .button-group { display: flex; justify-content: center; gap: 15px; margin-top: 25px; }
+        button { padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 15px; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: var(--primary-dark); }
+        .btn-secondary { background-color: #e0e0e0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Extracted Requirements</h1>
+            <p class="subtitle">All requirements collected from the form</p>
+        </header>
+
+        <!-- Functional -->
+        <div class="section">
+            <div class="section-title">
+                <span>Functional Requirements</span>
+                <span class="section-count">{{ categorized["Functional"]|length }}</span>
+            </div>
+            <ul id="functional-list">
+                {% for req in categorized["Functional"] %}
+                    <li>{{ req }}</li>
+                {% else %}
+                    <li>No functional requirements found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Non-Functional -->
+        <div class="section">
+            <div class="section-title">
+                <span>Non-Functional Requirements</span>
+                <span class="section-count">{{ categorized["Non-Functional"]|length }}</span>
+            </div>
+            <ul id="nonfunctional-list">
+                {% for req in categorized["Non-Functional"] %}
+                    <li>{{ req }}</li>
+                {% else %}
+                    <li>No non-functional requirements found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Domain -->
+        <div class="section">
+            <div class="section-title">
+                <span>Domain-Specific Requirements</span>
+                <span class="section-count">{{ categorized["Domain"]|length }}</span>
+            </div>
+            <ul id="domain-list">
+                {% for req in categorized["Domain"] %}
+                    <li>{{ req }}</li>
+                {% else %}
+                    <li>No domain-specific requirements found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Inverse -->
+        <div class="section">
+            <div class="section-title">
+                <span>Inverse (Negative) Requirements</span>
+                <span class="section-count">{{ categorized["Inverse"]|length }}</span>
+            </div>
+            <ul id="inverse-list">
+                {% for req in categorized["Inverse"] %}
+                    <li>{{ req }}</li>
+                {% else %}
+                    <li>No inverse requirements found.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+            <button class="btn-secondary" onclick="window.location.href='/form'">← Back to Form</button>
+            <button class="btn-primary" id="downloadBtn">📄 Download as PDF</button>
+        </div>
+    </div>
+
+    <!-- jsPDF for PDF export -->
+    <!-- (keep the rest of your original HTML exactly the same) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+    document.getElementById('downloadBtn').addEventListener('click', function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        const margin = 20;
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const maxTextWidth = pageWidth - margin * 2;
+        const titleFontSize = 18;
+        const sectionFontSize = 12;
+        const bodyFontSize = 11;
+        const lineHeight = 6; // mm; adjust if you change font size
+
+        let y = margin;
+
+        // Header
+        doc.setFontSize(titleFontSize);
+        doc.text('Extracted Requirements Report', margin, y);
+        y += 10;
+
+        doc.setFontSize(12);
+        const now = new Date();
+        doc.setFontSize(10);
+        doc.text(`Generated: ${now.toLocaleString()}`, margin, y);
+        y += 8;
+
+        // Utility to add a section with wrapped text and bullets
+        function addSection(title, elementId) {
+            // Check page space for section title
+            if (y + 12 > pageHeight - margin) {
+                doc.addPage();
+                y = margin;
+            }
+
+            // Section title
+            doc.setFontSize(sectionFontSize);
+            doc.setFont(undefined, 'bold');
+            doc.text(title, margin, y);
+            doc.setFont(undefined, 'normal');
+            y += 8;
+
+            // Get items
+            const items = document.getElementById(elementId).children;
+            for (let i = 0; i < items.length; i++) {
+                let text = items[i].textContent.trim();
+                if (!text) continue;
+
+                // Prepare wrapped lines for the item
+                // We'll reserve a small space for bullet; text begins slightly indented
+                const bulletPrefix = '• ';
+                const bulletWidthApprox = 4; // mm approximate reserved for bullet + gap
+                const wrapped = doc.splitTextToSize(text, maxTextWidth - bulletWidthApprox);
+
+                // If not enough room on current page for the whole wrapped block, add page
+                const requiredHeight = wrapped.length * lineHeight + 2;
+                if (y + requiredHeight > pageHeight - margin) {
+                    doc.addPage();
+                    y = margin;
+                }
+
+                // Draw first line with bullet
+                doc.setFontSize(bodyFontSize);
+                doc.text(bulletPrefix + wrapped[0], margin, y);
+                y += lineHeight;
+
+                // Draw remaining wrapped lines with small indent (so they align under text, not under bullet)
+                const indent = 4; // mm
+                for (let w = 1; w < wrapped.length; w++) {
+                    // Page break check for each subsequent line
+                    if (y + lineHeight > pageHeight - margin) {
+                        doc.addPage();
+                        y = margin;
+                    }
+                    doc.text(wrapped[w], margin + indent, y);
+                    y += lineHeight;
+                }
+
+                // small gap after each item
+                y += 1;
+            }
+
+            // extra gap after section
+            y += 6;
+        }
+
+        const sections = [
+            { title: "Functional Requirements", id: "functional-list" },
+            { title: "Non-Functional Requirements", id: "nonfunctional-list" },
+            { title: "Domain-Specific Requirements", id: "domain-list" },
+            { title: "Inverse Requirements", id: "inverse-list" }
+        ];
+
+        // Add sections
+        for (const s of sections) {
+            addSection(s.title, s.id);
+        }
+
+        // Footer (page numbers)
+        const pageCount = doc.internal.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+            doc.setFontSize(9);
+            const footerText = `Page ${i} of ${pageCount}`;
+            doc.text(footerText, pageWidth - margin, pageHeight - 10, { align: 'right' });
+        }
+
+        doc.save('Extracted_Requirements.pdf');
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+Functional (functional_1 … functional_8)
+
+functional_1 — allow donors to make online donations using multiple payment methods
+
+functional_2 — approve, suspend or remove fundraising campaigns and manage user accounts
+
+functional_3 — track donation progress, update campaign details and view campaign analytics
+
+functional_4 — let donors view, filter and download their past donation receipts
+
+functional_5 — register and log in using email/password and social login providers
+
+functional_6 — process payments via credit card, PayPal and bank transfer
+
+functional_7 — notify donors by email and SMS about donation updates and receipts
+
+functional_8 — create and manage recurring donations with schedule and reminders
+
+Non-Functional (nonfunc_1 … nonfunc_6)
+
+nonfunc_1 — respond to transactional requests within 3 seconds under normal load
+
+nonfunc_2 — encrypt sensitive donor data at rest and in transit using industry standards
+
+nonfunc_3 — provide 99.9% uptime during peak campaign periods
+
+nonfunc_4 — scale horizontally to handle spikes in traffic with load balancing
+
+nonfunc_5 — perform daily backups and support point-in-time recovery
+
+nonfunc_6 — offer a responsive, mobile-friendly UI with simple navigation
+
+Domain-Specific (domain_1 … domain_4)
+
+domain_1 — donation campaign creation and categorization by cause or event
+
+domain_2 — categorize donations by campaign, event, or project with tags
+
+domain_3 — generate weekly, monthly and custom donation reports for NGOs and admins
+
+domain_4 — manage donor profiles including preferences, payment methods and history
+
+Inverse / Negative (inverse_1 … inverse_2)
+
+inverse_1 — allow fraudulent transactions or bypass payment verification
+
+inverse_2 — permit unverified users to make high-value donations or manage campaigns

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --border-color: #ddd;
+            --error-color: #d32f2f;
+            --success-color: #388e3c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f9f9f9;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .input-hint {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+        }
+        
+        .password-strength {
+            height: 4px;
+            background-color: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #f44336;
+            transition: width 0.3s, background-color 0.3s;
+        }
+        
+        .show-password {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .show-password input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            cursor: pointer;
+        }
+        
+        .show-password label {
+            font-size: 14px;
+            font-weight: normal;
+            margin-bottom: 0;
+            cursor: pointer;
+            color: #555;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.5);
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .links {
+            margin-top: 25px;
+            text-align: center;
+        }
+        
+        .links a {
+            display: block;
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-bottom: 10px;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .links a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+        
+        .required::after {
+            content: " *";
+            color: var(--error-color);
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            background-color: #e8f5e9;
+            color: var(--success-color);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .terms {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .terms a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .terms a:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            h2 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h2>Create Account</h2>
+        <p class="subtitle">Join our donation platform community</p>
+    </header>
+
+    <form action="/register" method="POST">
+        <div class="form-group">
+            <label for="email" class="required">Email:</label>
+            <input type="email" id="email" name="email" required placeholder="Enter your email address">
+            <p class="input-hint">We'll never share your email with anyone else</p>
+            <div class="error-message" id="error_email">Please enter a valid email address</div>
+        </div>
+
+        <div class="form-group">
+            <label for="password" class="required">Password:</label>
+            <input type="password" id="password" name="password" required 
+                   placeholder="Create a strong password">
+            
+            <div class="password-strength">
+                <div class="strength-bar" id="strengthBar"></div>
+            </div>
+            <p class="input-hint">At least 8 characters with letters and numbers</p>
+            
+            <div class="show-password">
+                <input type="checkbox" id="showPassword">
+                <label for="showPassword">Show Password</label>
+            </div>
+            <div class="error-message" id="error_password">Password is required</div>
+        </div>
+
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <div class="links">
+        <div class="links">
+    <a href="/logout_first_then_signin">Already have an account? Sign In</a>
+</div>
+    </div>
+    
+    <div class="terms">
+        By signing up, you agree to our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>
+    </div>
+</div>
+
+<script>
+    // Show/Hide Password Function - CORRECTED
+    document.getElementById('showPassword').addEventListener('change', function() {
+        const passwordField = document.getElementById('password');
+        if (this.checked) {
+            passwordField.type = 'text';
+        } else {
+            passwordField.type = 'password';
+        }
+    });
+    
+    // Password Strength Checker
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const strengthBar = document.getElementById('strengthBar');
+        let strength = 0;
+        
+        if (password.length > 0) strength += 20;
+        if (password.length >= 8) strength += 20;
+        if (/[A-Z]/.test(password)) strength += 20;
+        if (/[0-9]/.test(password)) strength += 20;
+        if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+        
+        strengthBar.style.width = strength + '%';
+        
+        // Change color based on strength
+        if (strength <= 40) {
+            strengthBar.style.backgroundColor = '#f44336'; // Red
+        } else if (strength <= 80) {
+            strengthBar.style.backgroundColor = '#ff9800'; // Orange
+        } else {
+            strengthBar.style.backgroundColor = '#4caf50'; // Green
+        }
+    });
+</script>
+
+</body>
+</html>

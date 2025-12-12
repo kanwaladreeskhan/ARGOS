@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Donation System - Requirement Collection Form</title>
+    <style>
+        :root {
+            --primary-color: #2e7d32;
+            --primary-light: #4caf50;
+            --primary-dark: #1b5e20;
+            --secondary-color: #f5f5f5;
+            --text-color: #333;
+            --border-color: #ddd;
+            --error-color: #d32f2f;
+            --success-color: #388e3c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: #f9f9f9;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+           header img {
+            height: 120px;
+            margin-bottom: -100px;
+            display: flex;
+            align-items: flex-start;
+        }
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+        }
+        
+        .section-title {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+        
+        .input-hint {
+            display: block;
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2);
+        }
+        
+        .progress-container {
+            margin-bottom: 30px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.5);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: var(--text-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+        
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .required::after {
+            content: " *";
+            color: var(--error-color);
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            background-color: #e8f5e9;
+            color: var(--success-color);
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .form-section {
+                padding: 15px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+      <header>
+    <div class="row" style="align-items: center;">
+        <div class="col-4">
+            <img src="https://i.ibb.co/hJ5PXZp5/Light-removebg-preview.png" alt="Logo">
+        </div>
+        <div class="col-8" style="text-align: center;">
+            <!-- ARGOS Top pe -->
+            <h1 style="font-size: 48px; font-weight: 900; color: #1b5e20; margin: 0 0 8px 0; letter-spacing: 2px;">
+                ARGOS
+            </h1>
+            <p style="font-size: 18px; color: #2e7d32; margin: 0 0 20px 0; font-weight: 600;">
+                Your Watchful Assistant for Requirement Gathering
+            </p>
+
+            <!-- Original title neeche chhota aur elegant -->
+            <h2 style="font-size: 26px; color: var(--primary-color); margin: 0;">
+                Online Donation System
+            </h2>
+            <p class="subtitle" style="font-size: 15px; margin-top: 8px;">
+                Help us build a better donation platform by sharing your requirements
+            </p>
+        </div>
+    </div>
+</header>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0% Complete</div>
+        </div>
+        
+        <div class="success-message" id="successMessage">
+            Thank you! Your requirements have been submitted successfully.
+        </div>
+        
+        <form action="/submit" method="post" id="donationForm">
+            <!-- Functional Requirements Section -->
+            <div class="form-section">
+                <h2 class="section-title">Functional Requirements</h2>
+                <p class="input-hint">What the system should be able to do</p>
+
+                <div class="form-group">
+                    <label for="functional_1" class="required">What should the system allow a donor or user to
+                        do?</label>
+                    <input type="text" id="functional_1" name="functional_1"
+                        placeholder="e.g. make online donations, track donation history">
+                    <div class="error-message" id="error_functional_1">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="required">Should the admin approve campaigns?</label>
+                    <select id="functional_2" name="functional_2">
+                        <option value="">Select</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                    <div class="error-message" id="error_functional_2">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="functional_3" class="required">What feature should a campaign manager have?</label>
+                    <input type="text" id="functional_3" name="functional_3"
+                        placeholder="e.g. track donation progress, update campaign details">
+                    <div class="error-message" id="error_functional_3">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label>How should users register?</label>
+                    <input type="radio" id="functional_4_1" name="functional_4" value="email"> <label
+                        for="functional_4_1">Email</label>
+                    <input type="radio" id="functional_4_2" name="functional_4" value="social"> <label
+                        for="functional_4_2">Social Media</label>
+                </div>
+
+                <div class="form-group">
+                    <label for="functional_5">How can donors track their donation history?</label>
+                    <input type="text" id="functional_5" name="functional_5"
+                        placeholder="e.g. view past donations, download receipts">
+                </div>
+
+                <div class="form-group">
+                    <label for="functional_6" class="required">What payment methods should the system support?</label>
+                    <input type="text" id="functional_6" name="functional_6"
+                        placeholder="e.g. credit card, PayPal, bank transfer">
+                    <div class="error-message" id="error_functional_6">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Should recurring donations be allowed?</label>
+                    <select id="functional_7" name="functional_7">
+                        <option value="">Select</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="functional_8">How should the system notify donors about updates?</label>
+                    <input type="text" id="functional_8" name="functional_8"
+                        placeholder="e.g. email or SMS notifications, in-app alerts">
+                </div>
+            </div>
+
+            <!-- Non-Functional Requirements Section -->
+            <div class="form-section">
+                <h2 class="section-title">Non-Functional Requirements</h2>
+                <p class="input-hint">How the system should perform</p>
+
+                <div class="form-group">
+                    <label for="nonfunc_1">How fast should the donation system respond to transactions?</label>
+                    <input type="text" id="nonfunc_1" name="nonfunc_1" placeholder="e.g. within 3 seconds">
+                </div>
+
+                <div class="form-group">
+                    <label for="nonfunc_2" class="required">What security/privacy feature is needed for donor
+                        data?</label>
+                    <input type="text" id="nonfunc_2" name="nonfunc_2"
+                        placeholder="e.g. data encryption, privacy compliance">
+                    <div class="error-message" id="error_nonfunc_2">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="nonfunc_3">Expected uptime or availability?</label>
+                    <input type="text" id="nonfunc_3" name="nonfunc_3" placeholder="e.g. 99.9% uptime">
+                </div>
+
+                <div class="form-group">
+                    <label for="nonfunc_4">How should the system handle high traffic during campaigns?</label>
+                    <input type="text" id="nonfunc_4" name="nonfunc_4"
+                        placeholder="e.g. scalable cloud servers, load balancing">
+                </div>
+
+                <div class="form-group">
+                    <label for="nonfunc_5">How should the system ensure data backup and recovery?</label>
+                    <input type="text" id="nonfunc_5" name="nonfunc_5"
+                        placeholder="e.g. daily backups, disaster recovery plan">
+                </div>
+
+                <div class="form-group">
+                    <label for="nonfunc_6">Usability standards?</label>
+                    <input type="text" id="nonfunc_6" name="nonfunc_6"
+                        placeholder="e.g. responsive design, simple navigation">
+                </div>
+            </div>
+
+            <!-- Domain-Specific Requirements Section -->
+            <div class="form-section">
+                <h2 class="section-title">Domain-Specific Requirements</h2>
+                <p class="input-hint">Features specific to donation systems</p>
+
+                <div class="form-group">
+                    <label for="domain_1" class="required">Which domain feature is important in the donation
+                        system?</label>
+                    <input type="text" id="domain_1" name="domain_1" placeholder="e.g. donation campaign management">
+                    <div class="error-message" id="error_domain_1">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="domain_2">How should the system categorize donations by campaign or cause?</label>
+                    <input type="text" id="domain_2" name="domain_2" placeholder="e.g. by charity, event, or project">
+                </div>
+
+                <div class="form-group">
+                    <label for="domain_3">How should the system generate donation reports for NGOs or admins?</label>
+                    <input type="text" id="domain_3" name="domain_3"
+                        placeholder="e.g. weekly, monthly, or custom reports">
+                </div>
+
+                <div class="form-group">
+                    <label for="domain_4">How should the system manage donor profiles and preferences?</label>
+                    <input type="text" id="domain_4" name="domain_4"
+                        placeholder="e.g. personal info, donation frequency, alerts">
+                </div>
+            </div>
+
+            <!-- Inverse / Negative Requirements Section -->
+            <div class="form-section">
+                <h2 class="section-title">Security & Restrictions</h2>
+                <p class="input-hint">What the system should NOT allow</p>
+
+                <div class="form-group">
+                    <label for="inverse_1" class="required">What should the system not allow in the donation
+                        system?</label>
+                    <input type="text" id="inverse_1" name="inverse_1"
+                        placeholder="e.g. fraudulent transactions, unauthorized access">
+                    <div class="error-message" id="error_inverse_1">This field is required</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="inverse_2">What actions or inputs should be restricted for unverified users?</label>
+                    <input type="text" id="inverse_2" name="inverse_2"
+                        placeholder="e.g. cannot donate without verification">
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button type="button" class="btn-secondary" id="resetBtn">Reset Form</button>
+                <button type="submit" class="btn-primary">Submit Requirements</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('donationForm');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const successMessage = document.getElementById('successMessage');
+            const resetBtn = document.getElementById('resetBtn');
+            
+            // Required fields
+            const requiredFields = [
+                'functional_1', 'functional_2', 'functional_3', 'functional_6',
+                'nonfunc_2', 'domain_1', 'inverse_1'
+            ];
+            
+            // Update progress bar
+            function updateProgress() {
+                let filledCount = 0;
+                requiredFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    if (field && field.value.trim() !== '') {
+                        filledCount++;
+                    }
+                });
+                
+                const progress = (filledCount / requiredFields.length) * 100;
+                progressFill.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}% Complete`;
+            }
+            
+            // Validate form on submit
+            form.addEventListener('submit', function() {
+                 updateProgress();
+                let isValid = true;
+                
+                // Clear previous errors
+                document.querySelectorAll('.error-message').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                // Check required fields
+                requiredFields.forEach(fieldId => {
+                    const field = document.getElementById(fieldId);
+                    const errorElement = document.getElementById(`error_${fieldId}`);
+                    
+                    if (!field.value.trim()) {
+                        isValid = false;
+                        errorElement.style.display = 'block';
+                        field.style.borderColor = 'var(--error-color)';
+                    } else {
+                        field.style.borderColor = '';
+                    }
+                });
+                
+                if (isValid) {
+                    // Show success message
+                    successMessage.style.display = 'block';
+                    
+                    // In a real application, you would submit the form here
+                    // form.submit();
+                    
+                    // For demo purposes, we'll just reset after a delay
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                        form.reset();
+                        updateProgress();
+                    }, 3000);
+                }
+            });
+            
+            // Reset form
+            resetBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to reset the form? All entered data will be lost.')) {
+                    form.reset();
+                    updateProgress();
+                    
+                    // Clear errors
+                    document.querySelectorAll('.error-message').forEach(el => {
+                        el.style.display = 'none';
+                    });
+                    
+                    // Reset field borders
+                    document.querySelectorAll('input').forEach(input => {
+                        input.style.borderColor = '';
+                    });
+                }
+            });
+            
+            // Update progress as user types
+            form.addEventListener('input', function() {
+                updateProgress();
+            });
+            
+            // Initialize progress
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

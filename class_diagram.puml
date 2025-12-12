@@ -1,0 +1,51 @@
+@startuml
+skinparam classAttributeIconSize 0
+class Donor { }
+class Admin extends Donor { }
+class CampaignManager extends Donor { }
+class System { }
+Donor : +donorID : int
+Donor : +email : String
+Donor : +industrystandards : String
+Donor : +name : String
+Donor : +phone : String
+Donor : +allowDonorsMake()
+Donor : +allowUsersRegister()
+Donor : +donate()
+Donor : +manageDonorProfilesIncluding()
+Donor : +notifyDonorsEmail()
+Donor : +viewFilterDownload()
+Donor : +viewProfile()
+Admin : +adminID : int
+Admin : +email : String
+Admin : +name : String
+Admin : +role : String
+Admin : +allowAdminApprove()
+Admin : +configureSystem()
+Admin : +generateWeeklyMonthly()
+Admin : +manageUsers()
+Admin : +viewLogs()
+CampaignManager : +assignedCampaigns : int
+CampaignManager : +email : String
+CampaignManager : +managerID : int
+CampaignManager : +name : String
+CampaignManager : +orevent : String
+CampaignManager : +withtags : String
+CampaignManager : +assignCampaign()
+CampaignManager : +createCampaign()
+CampaignManager : +makeHighValueDonations()
+CampaignManager : +reviewCampaignReports()
+CampaignManager : +trackDonationProgressUpdate()
+System : +backupPolicy : daily
+System : +lastBackup : String
+System : +loadbalancing : String
+System : +responseTime : sec
+System : +simplenavigation : String
+System : +systemVersion : String
+System : +uptime : String
+System : +allowFraudulentTransactionsOr()
+System : +generateHealthReport()
+System : +performBackup()
+System : +processPaymentsViaCredit()
+System : +theSystemShall()
+@enduml

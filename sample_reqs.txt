@@ -1,0 +1,16 @@
+Functional Requirements:
+1. The system shall allow a User to create an account with username and password.
+2. The system shall allow a User to log in and log out.
+3. An Admin can add, update, and delete records.
+4. A User can view and update their profile.
+5. A Manager is a type of User.
+6. The system shall generate reports based on stored data.
+7. A User can request a service from the system.
+8. The system shall send notifications to Users.
+
+Non-Functional Requirements:
+1. The system must support at least 1000 concurrent users.
+2. Response time should not exceed 2 seconds for any query.
+3. The system must ensure secure storage of user data.
+4. The system should be available 99% of the time.
+5. Backup of the database must be taken daily.
