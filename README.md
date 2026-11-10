@@ -1,5 +1,5 @@
 # Auto Requirements Engineering Project
-Domain: Generic (works for any domain)
+Domain: Donation System
 
 This project will:
 - Collect requirements from users via a form
